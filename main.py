@@ -130,7 +130,7 @@ def user_ico():
 
 
 def live_status():
-  with open('settings.yml', encoding='utf-8') as file:
+  with open('live.yml', encoding='utf-8') as file:
     item = safe_load(file)
 
   return item['status']
