@@ -1,4 +1,4 @@
-#Twitch Announcer
+# Twitch Announcer
 stream announcement for discord
 
 <a href="https://repl.it/github/replshiawase/Twitch-Announcer">
