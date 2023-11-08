@@ -5,7 +5,7 @@ description = ""
 authors = ["Shi Shiawase <you@example.com>"]
 
 [project.urls]
-"Github" = "https://github.com/replshiawase/PurPurPur"
+"Github" = "https://github.com/replshiawase/TwitchAnnouncer"
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.11"
