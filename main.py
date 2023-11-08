@@ -27,7 +27,8 @@ settings = {
   'tw_secret_key': os.environ['tw_secret_key'],
   'tw_channel_name': os.environ['tw_channel_name'],
   'ds_token': os.environ['ds_token'],
-  'ds_channel': int(os.environ['ds_channel'])
+  'ds_channel': int(os.environ['ds_channel']),
+  'ds_message': os.environ['ds_message']
 }
 
 live_status = False
@@ -136,15 +137,18 @@ def live_status():
   return item['status']
 
 
-@tasks.loop(minutes=5, reconnect=True)
+@tasks.loop(minutes=10)
 async def stream_live():
 
   if 'twitch_token' not in globals(): authorize()
   stream = getStream()
+  print(stream)
 
+  print('check status...')
   if stream:
+    print('stream on')
     if not live_status():
-
+      print('add true stream')
       with open('live.yml', 'w', encoding='utf-8') as outfile:
         safe_dump({'status': True}, outfile, allow_unicode=True)
 
@@ -157,8 +161,10 @@ async def stream_live():
       title = stream[0]['title']
       img = stream[0]['thumbnail_url'].replace("{width}", "1280").replace(
         '{height}', '720') + '?rnd=' + t
-      game_box_art = getGame(stream[0]['game_id'])[0]['box_art_url'].replace(
-        "{width}", "144").replace('{height}', '192') + '?rnd=' + t
+      game_box_art = None
+      if gg := getGame(stream[0]['game_id']):
+        game_box_art = gg[0]['box_art_url'].replace("{width}", "144").replace(
+          '{height}', '192') + '?rnd=' + t
       icon = user_ico()
 
       embed = Embed(
@@ -166,7 +172,7 @@ async def stream_live():
         title=title,
         url='https://www.twitch.tv/' + settings['tw_channel_name'],
         description=
-        f"Начался Стрим Стримыч!\nhttps://www.twitch.tv/{settings['tw_channel_name']}"
+        f"{settings['ds_message']}\nhttps://www.twitch.tv/{settings['tw_channel_name']}"
       )
       embed.set_thumbnail(url=game_box_art)
       embed.set_author(
@@ -180,6 +186,7 @@ async def stream_live():
       await channel.send('', embed=embed)
 
   else:
+    print('stream off')
     if live_status():
       with open('live.yml', 'w', encoding='utf-8') as outfile:
         safe_dump({'status': False}, outfile, allow_unicode=True)
@@ -193,5 +200,7 @@ async def on_ready():
   stream_live.start()
 
 
-keep()
-bot.run(settings['ds_token'])
+while True:
+  keep()
+  bot.run(settings['ds_token'])
+  time.sleep(60)
