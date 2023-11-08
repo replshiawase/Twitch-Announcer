@@ -142,13 +142,9 @@ async def stream_live():
 
   if 'twitch_token' not in globals(): authorize()
   stream = getStream()
-  print(stream)
 
-  print('check status...')
   if stream:
-    print('stream on')
     if not live_status():
-      print('add true stream')
       with open('live.yml', 'w', encoding='utf-8') as outfile:
         safe_dump({'status': True}, outfile, allow_unicode=True)
 
@@ -186,7 +182,6 @@ async def stream_live():
       await channel.send('', embed=embed)
 
   else:
-    print('stream off')
     if live_status():
       with open('live.yml', 'w', encoding='utf-8') as outfile:
         safe_dump({'status': False}, outfile, allow_unicode=True)
